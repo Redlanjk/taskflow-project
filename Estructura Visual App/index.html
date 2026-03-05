@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProjectFlow - Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
     <header class="header">
@@ -32,34 +34,29 @@
 
             <div class="task-list">
 
-                <div class="task-card high">
-                    <div class="task-info">
-                        <h3>Diseñar página principal</h3>
-                        <span class="category">UI/UX</span>
-                    </div>
-                    <span class="badge">Alta</span>
-                </div>
+                <form id="task-form" style="margin-bottom: 1.5rem;">
+                    <input type="text" id="task-input" placeholder="Nueva tarea..." required>
 
-                <div class="task-card medium">
-                    <div class="task-info">
-                        <h3>Configurar base de datos</h3>
-                        <span class="category">Backend</span>
-                    </div>
-                    <span class="badge">Media</span>
-                </div>
+                    <select id="task-priority">
+                        <option value="high">Alta</option>
+                        <option value="medium">Media</option>
+                        <option value="low">Baja</option>
+                    </select>
 
-                <div class="task-card low">
-                    <div class="task-info">
-                        <h3>Revisar documentación</h3>
-                        <span class="category">Research</span>
-                    </div>
-                    <span class="badge">Baja</span>
-                </div>
+                    <input type="text" id="task-category" placeholder="Categoría" required>
+
+                    <button type="submit">Agregar</button>
+                </form>
+
+                <input type="text" id="search-input" placeholder="Buscar tarea..." style="margin-bottom: 1.5rem;">
+
+                <div class="task-list" id="task-list"></div>
 
             </div>
         </section>
 
     </main>
-
+<script src="app.js"></script>
 </body>
+
 </html>
