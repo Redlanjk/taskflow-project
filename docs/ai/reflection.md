@@ -1,0 +1,3 @@
+En este documento haré una reflexión final sobre la IA en la programación, añadiendo ejemplos en los que la inteligencia artificial ha sido de ayuda y también casos en los que la misma ha cometido errores o generado código incorrecto.
+
+Tambien reflexionaré sobre los riesgos de la dependencia de las inteligencias artificiales y algunas situaciones en las que personalmente prefiero trabajar sin asistencia.
