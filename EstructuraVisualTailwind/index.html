@@ -34,24 +34,64 @@ class="px-3 py-1 rounded-lg bg-gray-200 dark:bg-gray-700 hover:scale-105 transit
 
 <aside class="w-64 bg-gray-900 text-white p-6 hidden md:block">
 
-<ul class="space-y-2">
+      <ul class="space-y-2">
 
-<li class="bg-indigo-600 px-4 py-2 rounded cursor-pointer">Tareas</li>
-<li class="hover:bg-indigo-600 px-4 py-2 rounded cursor-pointer transition">Proyectos</li>
-<li class="hover:bg-indigo-600 px-4 py-2 rounded cursor-pointer transition">Equipo</li>
-<li class="hover:bg-indigo-600 px-4 py-2 rounded cursor-pointer transition">Ajustes</li>
+      <li id="tab-projects" class="bg-indigo-600 text-white px-4 py-2 rounded-xl cursor-pointer text-sm font-medium shadow-sm">Proyectos</li>
+      <li id="tab-tasks" class="text-gray-200 px-4 py-2 rounded-xl cursor-pointer text-sm font-medium hover:bg-indigo-500/60 transition">Tareas</li>
+      <li class="text-gray-300 px-4 py-2 rounded-xl cursor-pointer text-sm font-medium hover:bg-indigo-500/40 transition">Equipo</li>
+      <li class="text-gray-300 px-4 py-2 rounded-xl cursor-pointer text-sm font-medium hover:bg-indigo-500/40 transition">Ajustes</li>
 
-</ul>
+      </ul>
 
 </aside>
 
 
-<section class="flex-1 p-8">
+  <section class="flex-1 p-4 sm:p-6 lg:p-8">
 
-<h2 class="text-2xl font-semibold mb-6">Tareas Pendientes</h2>
+  <div id="projects-section" class="bg-white dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700/80 rounded-2xl shadow-sm p-6 sm:p-8 space-y-6">
+    <h2 class="text-2xl sm:text-3xl font-semibold mb-2 text-gray-900 dark:text-gray-100">Proyectos</h2>
+    <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">Crea y gestiona los proyectos a los que luego asignarás tus tareas.</p>
 
+    <form id="project-form" class="flex flex-col gap-4 mb-8 max-w-2xl">
+      <input
+        id="project-name"
+        type="text"
+        placeholder="Nombre del proyecto"
+        required
+        class="border rounded-lg w-full text-sm h-9 px-3 py-1.5
+        bg-white text-gray-800 placeholder-gray-400
+        dark:bg-gray-700 dark:text-white dark:placeholder-gray-300
+        hover:border-indigo-400
+        focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
+        outline-none transition duration-200"
+      />
 
-<form id="task-form" class="flex flex-wrap gap-3 mb-6">
+      <textarea
+        id="project-description"
+        placeholder="Descripción del proyecto"
+        rows="2"
+        class="border rounded-lg w-full text-sm px-3 py-2 resize-none
+        bg-white text-gray-800 placeholder-gray-400
+        dark:bg-gray-700 dark:text-white dark:placeholder-gray-300
+        hover:border-indigo-400
+        focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
+        outline-none transition duration-200"
+      ></textarea>
+
+      <button
+        class="self-start bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 hover:scale-105 transition col-span-full sm:w-max">
+        Crear proyecto
+      </button>
+    </form>
+
+    <div id="project-list" class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+  </div>
+
+  <div id="tasks-section" class="hidden bg-white dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700/80 rounded-2xl shadow-sm p-6 sm:p-8 space-y-6 mt-6">
+  <h2 class="text-2xl sm:text-3xl font-semibold mb-2 text-gray-900 dark:text-gray-100">Tareas</h2>
+  <p id="current-project-label" class="text-sm text-gray-500 dark:text-gray-400 mb-4">Selecciona un proyecto para empezar a crear tareas.</p>
+
+  <form id="task-form" class="flex flex-wrap gap-3 mb-6">
 
 <input
 id="task-input"
@@ -104,22 +144,67 @@ Agregar
 </form>
 
 
-<input
-id="search-input"
-type="text"
-placeholder="Buscar tarea..."
-class="border p-2 rounded-lg w-full mb-6
-bg-white text-gray-800 placeholder-gray-400
-dark:bg-gray-700 dark:text-white dark:placeholder-gray-300
-hover:border-indigo-400
-focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
-outline-none transition duration-200"
-/>
+  <div class="flex flex-wrap items-center gap-3 mb-6">
+    <label class="text-sm text-gray-600 dark:text-gray-300" for="project-select">
+      Proyecto actual:
+    </label>
+    <select
+      id="project-select"
+      class="border p-2 rounded-lg
+      bg-white text-gray-800
+      dark:bg-gray-700 dark:text-white
+      hover:border-indigo-400
+      focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
+      outline-none transition duration-200">
+      <option value="">Sin proyecto</option>
+    </select>
+  </div>
+
+  <input
+  id="search-input"
+  type="text"
+  placeholder="Buscar tarea..."
+  class="border p-2 rounded-lg w-full mb-6
+  bg-white text-gray-800 placeholder-gray-400
+  dark:bg-gray-700 dark:text-white dark:placeholder-gray-300
+  hover:border-indigo-400
+  focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
+  outline-none transition duration-200"
+  />
 
 
-<div id="task-list" class="space-y-4"></div>
+  <div class="flex flex-wrap justify-between items-center gap-3 mb-6">
+  <select
+    id="status-filter"
+    class="border p-2 rounded-lg
+    bg-white text-gray-800
+    dark:bg-gray-700 dark:text-white
+    hover:border-indigo-400
+    focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
+    outline-none transition duration-200">
+    <option value="todas">Todas</option>
+    <option value="pendiente">Pendientes</option>
+    <option value="completado">Completadas</option>
+  </select>
 
-</section>
+  <div class="flex gap-2">
+    <button
+      id="complete-all"
+      class="px-3 py-2 rounded-lg text-xs bg-green-600 text-white hover:bg-green-700 hover:scale-105 transition">
+      Marcar todas como completadas
+    </button>
+    <button
+      id="clear-completed"
+      class="px-3 py-2 rounded-lg text-xs bg-red-600 text-white hover:bg-red-700 hover:scale-105 transition">
+      Borrar tareas completadas
+    </button>
+  </div>
+</div>
+
+  <div id="task-list" class="space-y-4"></div>
+  </div>
+
+  </section>
 
 </main>
 
