@@ -11,7 +11,7 @@ La comparación tendra varios puntos:
 
 
 
-**1.-**Tras decirles, "Explícame resumidamente los conceptos: closures, event loop y DOM.", esto es lo que ambas respondieron.
+1.-Tras decirles, "Explícame resumidamente los conceptos: closures, event loop y DOM.", esto es lo que ambas respondieron.
 
 
 
@@ -84,7 +84,7 @@ El Document Object Model es la representación en forma de árbol que el navegad
 Ambas respuestas explican correctamente los conceptos de closures, event loop y DOM. Sin embargo, presentan enfoques diferentes. Claude prioriza la concisión y la claridad mediante definiciones breves, ejemplos y esquemas simples, lo que facilita una comprensión rápida. En cambio, ChatGPT ofrece una explicación más profunda al incluir ejemplos de código más precisos y descripciones del funcionamiento interno, lo que permite entender mejor cómo se aplican estos conceptos en la práctica. Por tanto, la segunda respuesta es más adecuada para un resumen rápido, mientras que la primera resulta más útil para aprendizaje y comprensión técnica.
 
 
-**2.-**Tras pedirles que detecten los errores de estas tres funciones JavaScript y los expliquen, estas fueron las respuestas:
+2.-Tras pedirles que detecten los errores de estas tres funciones JavaScript y los expliquen, estas fueron las respuestas:
 
 -Primera función:
 
@@ -157,7 +157,7 @@ if (num % 2 === 0) // ✅ comparación
 
 
 
-**3.-**Ahora pediremos que nos generen el código de tres funciones basicas en JavaScript, estas son las respuestas:
+3.-Ahora pediremos que nos generen el código de tres funciones basicas en JavaScript, estas son las respuestas:
 
 -Primera función:
 
