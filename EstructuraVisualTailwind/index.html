@@ -12,13 +12,22 @@
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-300">
 
-<header class="flex justify-between items-center h-16 px-8 bg-white dark:bg-gray-800 shadow">
+<header class="flex justify-between items-center h-16 px-4 sm:px-8 bg-white dark:bg-gray-800 shadow">
 
-<h1 class="text-xl font-bold text-indigo-600">TaskFlow</h1>
+<div class="flex items-center gap-3">
+  <button id="mobile-menu-toggle" class="md:hidden inline-flex items-center justify-center p-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition">
+    <span class="sr-only">Abrir menú</span>
+    <svg class="w-5 h-5 text-gray-700 dark:text-gray-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  </button>
+
+  <h1 class="text-xl font-bold text-indigo-600">TaskFlow</h1>
+</div>
 
 <div class="flex items-center gap-4">
 
-<span>Bienvenido</span>
+<span class="hidden sm:inline">Bienvenido</span>
 
 <button id="theme-toggle"
 class="px-3 py-1 rounded-lg bg-gray-200 dark:bg-gray-700 hover:scale-105 transition">
@@ -29,8 +38,16 @@ class="px-3 py-1 rounded-lg bg-gray-200 dark:bg-gray-700 hover:scale-105 transit
 
 </header>
 
-<main class="flex min-h-screen">
+<main class="flex flex-col md:flex-row min-h-screen">
 
+<nav id="mobile-menu" class="md:hidden bg-gray-900 text-white px-4 pb-3 pt-2 space-y-2 hidden">
+  <ul class="space-y-2">
+    <li id="tab-projects-mobile" class="bg-indigo-600 text-white px-4 py-2 rounded-xl cursor-pointer text-sm font-medium shadow-sm">Proyectos</li>
+    <li id="tab-tasks-mobile" class="text-gray-200 px-4 py-2 rounded-xl cursor-pointer text-sm font-medium hover:bg-indigo-500/60 transition">Tareas</li>
+    <li class="text-gray-300 px-4 py-2 rounded-xl cursor-pointer text-sm font-medium hover:bg-indigo-500/40 transition">Equipo</li>
+    <li class="text-gray-300 px-4 py-2 rounded-xl cursor-pointer text-sm font-medium hover:bg-indigo-500/40 transition">Ajustes</li>
+  </ul>
+</nav>
 
 <aside class="w-64 bg-gray-900 text-white p-6 hidden md:block">
 

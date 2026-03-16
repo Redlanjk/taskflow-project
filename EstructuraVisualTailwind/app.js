@@ -10,10 +10,14 @@ const statusFilter = document.getElementById("status-filter");
 const completeAllBtn = document.getElementById("complete-all");
 const clearCompletedBtn = document.getElementById("clear-completed");
 const themeToggle = document.getElementById("theme-toggle");
+const mobileMenuToggle = document.getElementById("mobile-menu-toggle");
+const mobileMenu = document.getElementById("mobile-menu");
 const projectsSection = document.getElementById("projects-section");
 const tasksSection = document.getElementById("tasks-section");
 const tabProjects = document.getElementById("tab-projects");
 const tabTasks = document.getElementById("tab-tasks");
+const tabProjectsMobile = document.getElementById("tab-projects-mobile");
+const tabTasksMobile = document.getElementById("tab-tasks-mobile");
 const projectForm = document.getElementById("project-form");
 const projectNameInput = document.getElementById("project-name");
 const projectDescriptionInput = document.getElementById("project-description");
@@ -391,31 +395,64 @@ establecerProyectoActivo(Number(valor));
 
 });
 
-tabProjects.addEventListener("click", () => {
-
+function activarTabProyectos() {
 projectsSection.classList.remove("hidden");
 tasksSection.classList.add("hidden");
 
 tabProjects.classList.add("bg-indigo-600");
 tabProjects.classList.remove("hover:bg-indigo-600");
-
 tabTasks.classList.remove("bg-indigo-600");
 tabTasks.classList.add("hover:bg-indigo-600");
 
-});
+if (tabProjectsMobile && tabTasksMobile) {
+  tabProjectsMobile.classList.add("bg-indigo-600");
+  tabProjectsMobile.classList.remove("hover:bg-indigo-600");
+  tabTasksMobile.classList.remove("bg-indigo-600");
+  tabTasksMobile.classList.add("hover:bg-indigo-600");
+}
+}
 
-tabTasks.addEventListener("click", () => {
-
+function activarTabTareas() {
 tasksSection.classList.remove("hidden");
 projectsSection.classList.add("hidden");
 
 tabTasks.classList.add("bg-indigo-600");
 tabTasks.classList.remove("hover:bg-indigo-600");
-
 tabProjects.classList.remove("bg-indigo-600");
 tabProjects.classList.add("hover:bg-indigo-600");
 
+if (tabProjectsMobile && tabTasksMobile) {
+  tabTasksMobile.classList.add("bg-indigo-600");
+  tabTasksMobile.classList.remove("hover:bg-indigo-600");
+  tabProjectsMobile.classList.remove("bg-indigo-600");
+  tabProjectsMobile.classList.add("hover:bg-indigo-600");
+}
+}
+
+tabProjects.addEventListener("click", activarTabProyectos);
+tabTasks.addEventListener("click", activarTabTareas);
+
+if (tabProjectsMobile && tabTasksMobile) {
+tabProjectsMobile.addEventListener("click", () => {
+  activarTabProyectos();
+  if (mobileMenu) {
+    mobileMenu.classList.add("hidden");
+  }
 });
+
+tabTasksMobile.addEventListener("click", () => {
+  activarTabTareas();
+  if (mobileMenu) {
+    mobileMenu.classList.add("hidden");
+  }
+});
+}
+
+if (mobileMenuToggle && mobileMenu) {
+mobileMenuToggle.addEventListener("click", () => {
+  mobileMenu.classList.toggle("hidden");
+});
+}
 
 
 // Modo Oscuro
