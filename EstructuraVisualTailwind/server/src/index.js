@@ -27,6 +27,12 @@ app.use((req, res) => {
 // Manejo global de errores
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`TaskFlow API escuchando en http://localhost:${PORT}/api/v1`);
-});
+// Para desarrollo local: si ejecuto server/src/index.js directamente, escucho
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`TaskFlow API escuchando en http://localhost:${PORT}/api/v1`);
+  });
+}
+
+// Para Vercel / Serverless: exportamos la app
+module.exports = app;
