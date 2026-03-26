@@ -1,3 +1,15 @@
+import {
+  getProjects,
+  createProject,
+  deleteProject,
+  getTasks,
+  createTask,
+  deleteTask,
+  patchTaskEstado,
+  patchCompleteAll,
+  deleteCompleted,
+} from "./src/api/client.js";
+
 document.addEventListener("DOMContentLoaded", () => {
 
 const form = document.getElementById("task-form");
@@ -24,26 +36,84 @@ const projectDescriptionInput = document.getElementById("project-description");
 const projectList = document.getElementById("project-list");
 const projectSelect = document.getElementById("project-select");
 const currentProjectLabel = document.getElementById("current-project-label");
+const projectsStatus = document.getElementById("projects-status");
+const tasksStatus = document.getElementById("tasks-status");
 
-let tareas = (JSON.parse(localStorage.getItem("tareas")) || []).map(t => ({
-  estado: t.estado || "pendiente",
-  ...t,
-}));
+let tareas = [];
+let proyectos = [];
+let proyectoActivoId = null;
 
-let proyectos = JSON.parse(localStorage.getItem("proyectos")) || [];
-let proyectoActivoId = localStorage.getItem("proyectoActivoId");
+function setStatus(el, message, kind = "info") {
+  if (!el) return;
 
-if (proyectoActivoId) {
-  proyectoActivoId = Number(proyectoActivoId);
+  if (!message) {
+    el.textContent = "";
+    el.classList.add("hidden");
+    return;
+  }
+
+  el.textContent = message;
+  el.classList.remove("hidden");
+
+  el.classList.remove("text-red-600", "dark:text-red-400", "text-gray-600", "dark:text-gray-300", "animate-pulse");
+
+  if (kind === "error") {
+    el.classList.add("text-red-600", "dark:text-red-400");
+    return;
+  }
+
+  el.classList.add("text-gray-600", "dark:text-gray-300");
+  if (kind === "loading") el.classList.add("animate-pulse");
 }
 
-function guardarTareas() {
-localStorage.setItem("tareas", JSON.stringify(tareas));
+async function cargarProyectos({ preserveActive = true } = {}) {
+  setStatus(projectsStatus, "Cargando proyectos...", "loading");
+
+  proyectos = await getProjects();
+
+  if (!preserveActive || proyectoActivoId === null) {
+    proyectoActivoId = proyectos[0]?.id ?? null;
+  } else if (!proyectos.some((p) => p.id === proyectoActivoId)) {
+    proyectoActivoId = proyectos[0]?.id ?? null;
+  }
+
+  renderizarProyectos();
+  actualizarSelectProyectos();
+
+  setStatus(projectsStatus, "", "success");
 }
 
-function guardarProyectos() {
-localStorage.setItem("proyectos", JSON.stringify(proyectos));
+async function cargarTareas() {
+  if (!proyectoActivoId) {
+    tareas = [];
+    taskList.innerHTML = "";
+    setStatus(tasksStatus, "", "success");
+    return;
+  }
+
+  setStatus(tasksStatus, "Cargando tareas...", "loading");
+  tareas = await getTasks({ projectId: proyectoActivoId });
+
+  renderizarTareasParaProyectoActivo();
+  setStatus(tasksStatus, "", "success");
 }
+
+async function inicializar() {
+  try {
+    await cargarProyectos({ preserveActive: false });
+    if (proyectoActivoId) {
+      await cargarTareas();
+    } else {
+      tareas = [];
+      taskList.innerHTML = "";
+    }
+  } catch (err) {
+    setStatus(projectsStatus, err?.message || "Error al cargar proyectos", "error");
+    setStatus(tasksStatus, err?.message || "Error al cargar tareas", "error");
+  }
+}
+
+inicializar();
 
 function formatearPrioridad(priority) {
 if (priority === "high") return "Alta";
@@ -113,28 +183,27 @@ Alternar estado
 
 `;
 
-card.querySelector(".toggle-estado-btn").addEventListener("click", () => {
+card.querySelector(".toggle-estado-btn").addEventListener("click", async () => {
 
-tarea.estado = tarea.estado === "completado" ? "pendiente" : "completado";
+const nuevoEstado = tarea.estado === "completado" ? "pendiente" : "completado";
 
-tareas = tareas.map(t => (t.id === tarea.id ? { ...t, estado: tarea.estado } : t));
-
-guardarTareas();
-
-taskList.removeChild(card);
-crearTarea(tarea);
-
-aplicarFiltros();
+try {
+  await patchTaskEstado(tarea.id, nuevoEstado);
+  await cargarTareas();
+} catch (err) {
+  setStatus(tasksStatus, err?.message || "Error al actualizar tarea", "error");
+}
 
 });
 
-card.querySelector(".delete-btn").addEventListener("click", () => {
+card.querySelector(".delete-btn").addEventListener("click", async () => {
 
-card.remove();
-
-tareas = tareas.filter(t => t.id !== tarea.id);
-
-guardarTareas();
+try {
+  await deleteTask(tarea.id);
+  await cargarTareas();
+} catch (err) {
+  setStatus(tasksStatus, err?.message || "Error al eliminar tarea", "error");
+}
 
 });
 
@@ -194,28 +263,18 @@ card.innerHTML = `
 
 card.querySelector(".select-project").addEventListener("click", () => {
 
-establecerProyectoActivo(proyecto.id);
+void establecerProyectoActivo(proyecto.id);
 
 });
 
-card.querySelector(".delete-project").addEventListener("click", () => {
-
-proyectos = proyectos.filter(p => p.id !== proyecto.id);
-guardarProyectos();
-
-tareas = tareas.filter(t => t.projectId !== proyecto.id);
-guardarTareas();
-
-if (proyectoActivoId === proyecto.id) {
-  proyectoActivoId = null;
-  localStorage.removeItem("proyectoActivoId");
-  taskList.innerHTML = "";
-  actualizarSelectProyectos();
-}
-
-renderizarProyectos();
-actualizarSelectProyectos();
-
+card.querySelector(".delete-project").addEventListener("click", async () => {
+  try {
+    await deleteProject(proyecto.id);
+    await cargarProyectos({ preserveActive: false });
+    await cargarTareas();
+  } catch (err) {
+    setStatus(projectsStatus, err?.message || "Error al eliminar proyecto", "error");
+  }
 });
 
 projectList.appendChild(card);
@@ -267,23 +326,18 @@ aplicarFiltros();
 
 }
 
-function establecerProyectoActivo(id) {
+async function establecerProyectoActivo(id) {
 
-proyectoActivoId = id;
+  proyectoActivoId = id;
 
-localStorage.setItem("proyectoActivoId", String(proyectoActivoId));
+  renderizarProyectos();
+  actualizarSelectProyectos();
 
-renderizarProyectos();
-actualizarSelectProyectos();
-renderizarTareasParaProyectoActivo();
+  await cargarTareas();
 
 }
 
-renderizarProyectos();
-actualizarSelectProyectos();
-renderizarTareasParaProyectoActivo();
-
-form.addEventListener("submit", e => {
+form.addEventListener("submit", async (e) => {
 
 e.preventDefault();
 
@@ -308,11 +362,18 @@ projectId: proyectoActivoId
 
 if (!nuevaTarea.text || !nuevaTarea.category) return;
 
-tareas.push(nuevaTarea);
-
-guardarTareas();
-
-renderizarTareasParaProyectoActivo();
+try {
+  setStatus(tasksStatus, "Creando tarea...", "loading");
+  await createTask({
+    text: nuevaTarea.text,
+    priority: nuevaTarea.priority,
+    category: nuevaTarea.category,
+    projectId: proyectoActivoId,
+  });
+  await cargarTareas();
+} catch (err) {
+  setStatus(tasksStatus, err?.message || "Error al crear tarea", "error");
+}
 
 form.reset();
 
@@ -322,76 +383,76 @@ searchInput.addEventListener("input", aplicarFiltros);
 
 statusFilter.addEventListener("change", aplicarFiltros);
 
-completeAllBtn.addEventListener("click", () => {
+completeAllBtn.addEventListener("click", async () => {
+  if (!proyectoActivoId) return;
 
-if (!proyectoActivoId) return;
+  try {
+    setStatus(tasksStatus, "Marcando todas como completadas...", "loading");
+    await patchCompleteAll(proyectoActivoId);
+    await cargarTareas();
+  } catch (err) {
+    setStatus(tasksStatus, err?.message || "Error al marcar tareas", "error");
+  }
+});
 
-tareas = tareas.map(t =>
-  t.projectId === proyectoActivoId ? { ...t, estado: "completado" } : t
-);
+clearCompletedBtn.addEventListener("click", async () => {
+  if (!proyectoActivoId) return;
 
-guardarTareas();
-renderizarTareasParaProyectoActivo();
+  try {
+    setStatus(tasksStatus, "Borrando tareas completadas...", "loading");
+    await deleteCompleted(proyectoActivoId);
+    await cargarTareas();
+  } catch (err) {
+    setStatus(tasksStatus, err?.message || "Error al borrar tareas", "error");
+  }
+});
+
+projectForm.addEventListener("submit", async (e) => {
+
+  e.preventDefault();
+
+  const nombre = projectNameInput.value.trim();
+  const descripcion = projectDescriptionInput.value.trim();
+
+  if (!nombre) return;
+
+  const estabaSinProyectoActivo = proyectoActivoId === null;
+
+  try {
+    setStatus(projectsStatus, "Creando proyecto...", "loading");
+    const creado = await createProject({ nombre, descripcion });
+    projectForm.reset();
+
+    if (estabaSinProyectoActivo) {
+      proyectoActivoId = creado.id;
+    }
+
+    await cargarProyectos({ preserveActive: true });
+
+    if (estabaSinProyectoActivo) {
+      await cargarTareas();
+    }
+  } catch (err) {
+    setStatus(projectsStatus, err?.message || "Error al crear proyecto", "error");
+  }
 
 });
 
-clearCompletedBtn.addEventListener("click", () => {
-
-if (!proyectoActivoId) return;
-
-tareas = tareas.filter(t =>
-  !(t.projectId === proyectoActivoId && t.estado === "completado")
-);
-
-guardarTareas();
-renderizarTareasParaProyectoActivo();
-
-});
-
-projectForm.addEventListener("submit", e => {
-
-e.preventDefault();
-
-const nombre = projectNameInput.value.trim();
-const descripcion = projectDescriptionInput.value.trim();
-
-if (!nombre) return;
-
-const nuevoProyecto = {
-  id: Date.now(),
-  nombre,
-  descripcion,
-};
-
-proyectos.push(nuevoProyecto);
-
-guardarProyectos();
-
-projectForm.reset();
-
-renderizarProyectos();
-actualizarSelectProyectos();
-
-if (!proyectoActivoId) {
-  establecerProyectoActivo(nuevoProyecto.id);
-}
-
-});
-
-projectSelect.addEventListener("change", () => {
+projectSelect.addEventListener("change", async () => {
 
 const valor = projectSelect.value;
 
 if (!valor) {
   proyectoActivoId = null;
-  localStorage.removeItem("proyectoActivoId");
+  tareas = [];
   taskList.innerHTML = "";
-  actualizarSelectProyectos();
   renderizarProyectos();
+  actualizarSelectProyectos();
+  setStatus(tasksStatus, "", "success");
   return;
 }
 
-establecerProyectoActivo(Number(valor));
+await establecerProyectoActivo(Number(valor));
 
 });
 
@@ -458,20 +519,7 @@ mobileMenuToggle.addEventListener("click", () => {
 // Modo Oscuro
 
 themeToggle.addEventListener("click", () => {
-
-document.documentElement.classList.toggle("dark");
-
-localStorage.setItem(
-"theme",
-document.documentElement.classList.contains("dark") ? "dark" : "light"
-);
-
+  document.documentElement.classList.toggle("dark");
 });
-
-if (localStorage.getItem("theme") === "dark") {
-
-document.documentElement.classList.add("dark");
-
-}
 
 });

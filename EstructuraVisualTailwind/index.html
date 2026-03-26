@@ -68,6 +68,7 @@ class="px-3 py-1 rounded-lg bg-gray-200 dark:bg-gray-700 hover:scale-105 transit
   <div id="projects-section" class="bg-white dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700/80 rounded-2xl shadow-sm p-6 sm:p-8 space-y-6">
     <h2 class="text-2xl sm:text-3xl font-semibold mb-2 text-gray-900 dark:text-gray-100">Proyectos</h2>
     <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">Crea y gestiona los proyectos a los que luego asignarás tus tareas.</p>
+    <div id="projects-status" class="text-sm text-gray-600 dark:text-gray-300 hidden" role="status"></div>
 
     <form id="project-form" class="flex flex-col gap-4 mb-8 max-w-2xl">
       <input
@@ -107,6 +108,7 @@ class="px-3 py-1 rounded-lg bg-gray-200 dark:bg-gray-700 hover:scale-105 transit
   <div id="tasks-section" class="hidden bg-white dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700/80 rounded-2xl shadow-sm p-6 sm:p-8 space-y-6 mt-6">
   <h2 class="text-2xl sm:text-3xl font-semibold mb-2 text-gray-900 dark:text-gray-100">Tareas</h2>
   <p id="current-project-label" class="text-sm text-gray-500 dark:text-gray-400 mb-4">Selecciona un proyecto para empezar a crear tareas.</p>
+  <div id="tasks-status" class="text-sm text-gray-600 dark:text-gray-300 hidden" role="status"></div>
 
   <form id="task-form" class="flex flex-wrap gap-3 mb-6">
 
@@ -225,7 +227,7 @@ Agregar
 
 </main>
 
-<script src="app.js"></script>
+<script type="module" src="./app.js"></script>
 
 </body>
 </html>
