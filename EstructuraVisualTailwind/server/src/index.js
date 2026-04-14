@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("node:path");
 
 const { PORT } = require("./config/env");
 const { loggerAcademico } = require("./middlewares/loggerAcademico");
@@ -15,9 +16,18 @@ app.use(cors());
 app.use(express.json());
 app.use(loggerAcademico);
 
+// Servir frontend (para evitar problemas de ES Modules con file://)
+const webRoot = path.join(__dirname, "..", "..");
+app.use(express.static(webRoot));
+
 // Routing centralizado por recursos
 app.use("/api/v1/tasks", taskRoutes);
 app.use("/api/v1/projects", projectRoutes);
+
+// Página principal
+app.get("/", (req, res) => {
+  res.sendFile(path.join(webRoot, "index.html"));
+});
 
 // 404 para rutas no encontradas
 app.use((req, res) => {

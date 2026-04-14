@@ -1,6 +1,6 @@
 ## TaskFlow
 
-**TaskFlow** es una aplicación web para gestionar tareas organizadas por proyectos. Permite crear proyectos, asignarles tareas y controlar su estado, prioridad y categoría desde una interfaz sencilla.
+**TaskFlow** es una aplicación web para gestionar tareas organizadas por proyectos. En esta versión, el almacenamiento ya no depende de LocalStorage: el frontend consume una **API REST en Express**.
 
 ### Características
 
@@ -14,51 +14,49 @@
 * Marcar **todas las tareas como completadas**
 * **Eliminar tareas completadas**
 * **Modo oscuro**
-* Persistencia de datos mediante **LocalStorage**
+* Persistencia de datos mediante **backend Express** (en memoria durante la ejecución)
 
 ### Tecnologías utilizadas
 
 * **HTML5**
 * **CSS (TailwindCSS)**
 * **JavaScript (Vanilla JS)**
-* **LocalStorage** para guardar proyectos y tareas en el navegador
+* **Node.js + Express** (API REST)
+* **fetch** para comunicación cliente-servidor
 
 ### Funcionamiento
 
 1. Crear un **proyecto** desde la sección de proyectos.
-2. Seleccionar el proyecto activo.
+2. Seleccionar el proyecto activo (al crear un proyecto, se activa automáticamente).
 3. Añadir **tareas** indicando nombre, prioridad y categoría.
 4. Gestionar tareas cambiando su estado, filtrándolas o eliminándolas.
 
-Toda la información se guarda en el **navegador del usuario**, por lo que no se requiere base de datos ni servidor.
+La información se gestiona mediante el **servidor Express** (persistencia en memoria por ahora).
 
 ### Estructura del proyecto
 
 ```
 /taskflow
- ├── index.html
- ├── style.css
- ├── app.js
+ ├── EstructuraVisualTailwind/
+ │   ├── index.html
+ │   ├── style.css
+ │   ├── app.js
+ │   ├── src/api/client.js
+ │   └── server/ (API Express)
+ ├── docs/
  └── README.md
 ```
 
-### Almacenamiento
-
-La aplicación utiliza **LocalStorage** para guardar:
-
-* `proyectos`
-* `tareas`
-* `proyectoActivoId`
-* `theme`
-
-Esto permite que los datos se mantengan aunque se recargue la página.
-
 ### Uso
 
-1. Clonar el repositorio o descargar los archivos.
-2. Abrir `index.html` en el navegador.
-3. Crear proyectos y comenzar a gestionar tareas.
+1. Instalar dependencias del servidor:
+   - `cd EstructuraVisualTailwind/server`
+   - `npm install`
+2. Arrancar el backend (sirve también el frontend):
+   - `npm run dev`
+3. Abrir la app en:
+   - `http://localhost:3000/`
 
 ---
 
-Aplicación pensada como práctica de **JavaScript, manipulación del DOM y almacenamiento en el navegador**.
+Aplicación pensada como práctica de **JavaScript (frontend) y backend con Express (API REST)** aplicando arquitectura por capas, validación defensiva y manejo global de errores.

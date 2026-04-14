@@ -263,7 +263,10 @@ card.innerHTML = `
 
 card.querySelector(".select-project").addEventListener("click", () => {
 
-void establecerProyectoActivo(proyecto.id);
+void (async () => {
+  await establecerProyectoActivo(proyecto.id);
+  activarTabTareas();
+})();
 
 });
 
@@ -423,15 +426,13 @@ projectForm.addEventListener("submit", async (e) => {
     const creado = await createProject({ nombre, descripcion });
     projectForm.reset();
 
-    if (estabaSinProyectoActivo) {
-      proyectoActivoId = creado.id;
-    }
+    // Al crear un proyecto, lo activamos siempre.
+    proyectoActivoId = creado.id;
 
     await cargarProyectos({ preserveActive: true });
 
-    if (estabaSinProyectoActivo) {
-      await cargarTareas();
-    }
+    await cargarTareas();
+    activarTabTareas();
   } catch (err) {
     setStatus(projectsStatus, err?.message || "Error al crear proyecto", "error");
   }

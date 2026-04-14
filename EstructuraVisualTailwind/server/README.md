@@ -31,6 +31,16 @@ Archivo: `./.env`
 
 Prefijo base: `http://localhost:3000/api/v1`
 
+## Ejecutar la app completa (recomendado)
+
+Este servidor **sirve también el frontend** para evitar problemas de ES Modules cuando se abre el HTML con `file://`.
+
+1. Desde `EstructuraVisualTailwind/server`:
+   - `npm install`
+   - `npm run dev`
+2. Abre:
+   - `http://localhost:3000/`
+
 ### Proyectos
 
 1. `GET /projects`
